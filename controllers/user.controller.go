@@ -3,7 +3,7 @@ package controllers
 import (
 	"context"
 
-	db "personal-portfolio-backend/db/query/sqlc"
+	db "github.com/hezekiah-elisha/personal-portfolio-backend/db/query/sqlc"
 )
 
 type UserController struct {

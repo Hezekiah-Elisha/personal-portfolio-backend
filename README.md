@@ -32,7 +32,23 @@ go: creating new go.mod: module personal-portfolio-backend
 /personal/personal-portfolio-backend/db/migration/000001_init_schema.down.sql
 # This was the output
 ```
-3. 
+
+3. sqlc init - create a new sqlc configuration file
+
+```bash
+/personal-portfolio-backend/sqlc.yaml
+# This was the output
+```
+
+4. **sqlc generate** - generate Go code from SQL queries
+
+```bash
+/personal-portfolio-backend/db/query/sqlc/queries.go
+/personal-portfolio-backend/db/query/sqlc/queries.sql.go
+/personal-portfolio-backend/db/query/sqlc/models.go
+/personal-portfolio-backend/db/query/sqlc/db.go
+# This was the output
+```
 
 ### Credit
 

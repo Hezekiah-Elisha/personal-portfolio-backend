@@ -13,13 +13,14 @@ import (
 type User struct {
 	gorm.Model
 	models.User
+	models.Experience
 }
 
 var DB *gorm.DB
 
 func ConnectDB() *gorm.DB {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatal("Error loading .env file")
 		return nil
 	}
 
@@ -33,11 +34,13 @@ func ConnectDB() *gorm.DB {
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &models.Experience{})
 	if err != nil {
 		log.Fatalf("Error connecting to the database: %v", err)
-		return nil
+		// return nil
 	}
+	DB = db
 	log.Println("Database connection established successfully")
-	return db
+
+	return DB
 }

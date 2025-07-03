@@ -1,6 +1,12 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+	"personal-portfolio-backend/config"
+	"personal-portfolio-backend/models"
+
+	"github.com/gin-gonic/gin"
+)
 
 type CreateExperienceInput struct {
 	Title       string `json:"title" binding:"required"`
@@ -12,6 +18,58 @@ type CreateExperienceInput struct {
 	UserID      uint   `json:"user_id" binding:"required"`
 }
 
-func CreateExperience(c *gin.Context) {
+type ExperienceResponse struct {
+	ID          uint   `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Company     string `json:"company"`
+	Location    string `json:"location"`
+	StartDate   string `json:"start_date"`
+	EndDate     string `json:"end_date"`
+	UserID      uint   `json:"user_id"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+}
 
+func CreateExperience(c *gin.Context) {
+	var input CreateExperienceInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	experience := models.Experience{
+		Title:       input.Title,
+		Description: input.Description,
+		Company:     input.Company,
+		Location:    input.Location,
+		StartDate:   input.StartDate,
+		EndDate:     input.EndDate,
+		UserID:      input.UserID,
+	}
+
+	result := config.DB.Create(&experience)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+	c.JSON(201, gin.H{"data": experience})
+}
+
+func GetAllExperiences(c *gin.Context) {
+	var experiences []models.Experience
+
+	result := config.DB.Find(&experiences)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	if len(experiences) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No experiences found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, experiences)
 }

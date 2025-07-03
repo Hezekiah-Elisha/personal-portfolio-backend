@@ -35,7 +35,20 @@ func GetAllUsers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, users)
+	var userResponses []UserResponse
+	for _, user := range users {
+		userResponse := UserResponse{
+			ID:        user.ID,
+			Username:  user.Username,
+			Email:     user.Email,
+			Role:      user.Role,
+			CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: user.UpdatedAt.Format("2006-01-02 15:04:05"),
+		}
+		userResponses = append(userResponses, userResponse)
+	}
+
+	c.JSON(http.StatusOK, userResponses)
 }
 
 func Createuser(c *gin.Context) {

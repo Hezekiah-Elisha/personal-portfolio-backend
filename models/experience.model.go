@@ -1,6 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Experience struct {
+	gorm.Model
 	Title       string `json:"title" gorm:"not null"`
 	Description string `json:"description" gorm:"not null"`
 	Company     string `json:"company" gorm:"not null"`

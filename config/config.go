@@ -10,16 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
-	gorm.Model
-	models.User
-}
-
-type Experience struct {
-	gorm.Model
-	models.Experience
-}
-
 var DB *gorm.DB
 
 func ConnectDB() *gorm.DB {
@@ -38,7 +28,7 @@ func ConnectDB() *gorm.DB {
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	db.AutoMigrate(&User{}, &Experience{})
+	db.AutoMigrate(&models.User{}, &models.Experience{})
 	if err != nil {
 		log.Fatalf("Error connecting to the database: %v", err)
 		// return nil

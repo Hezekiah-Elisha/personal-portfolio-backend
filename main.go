@@ -45,6 +45,7 @@ func main() {
 			"message": "Welcome to the Personal Portfolio Backend API",
 		})
 	})
+	routes.SetupAuthRoutes(r)
 	routes.SetupUserRoutes(r)
 	routes.SetupExperienceRoutes(r)
 

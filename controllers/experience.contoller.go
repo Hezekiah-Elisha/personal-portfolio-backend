@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"personal-portfolio-backend/config"
 	"personal-portfolio-backend/models"
@@ -35,7 +36,8 @@ func CreateExperience(c *gin.Context) {
 	var input CreateExperienceInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input data", "details": err.Error()})
 		return
 	}
 
@@ -45,6 +47,7 @@ func CreateExperience(c *gin.Context) {
 		return
 	}
 	// Convert to uint (assuming your user ID is uint)
+	log.Println("User ID from context:", userID)
 	userIDUint, ok := userID.(uint)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})

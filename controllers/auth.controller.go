@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"net/http"
+	"os"
 	"personal-portfolio-backend/config"
 	"personal-portfolio-backend/models"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -42,6 +45,11 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
+	var (
+		key []byte
+		s   string
+	)
+
 	var input UserLoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -54,18 +62,29 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-		return
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(hashedPassword)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
+
+	key = []byte(os.Getenv("JWT_SECRET"))
+
+	claims := jwt.MapClaims{
+		"id":       user.ID,
+		"username": user.Username,
+		"email":    user.Email,
+		"role":     user.Role,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token expiration time set to 24 hours
+	}
+	s, err := createToken(claims, key)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create token"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login successful",
+		"token":   s,
 		"user": gin.H{
 			"id":       user.ID,
 			"username": user.Username,
@@ -73,4 +92,13 @@ func Login(c *gin.Context) {
 			"role":     user.Role,
 		},
 	})
+}
+
+func createToken(claims jwt.MapClaims, key []byte) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(key)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }

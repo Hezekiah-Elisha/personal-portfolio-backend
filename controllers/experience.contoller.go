@@ -15,7 +15,7 @@ type CreateExperienceInput struct {
 	Location    string `json:"location" binding:"required"`
 	StartDate   string `json:"start_date" binding:"required"`
 	EndDate     string `json:"end_date"`
-	UserID      uint   `json:"user_id" binding:"required"`
+	UserID      uint   `json:"user_id"`
 }
 
 type ExperienceResponse struct {
@@ -39,6 +39,18 @@ func CreateExperience(c *gin.Context) {
 		return
 	}
 
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+	// Convert to uint (assuming your user ID is uint)
+	userIDUint, ok := userID.(uint)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+		return
+	}
+
 	experience := models.Experience{
 		Title:       input.Title,
 		Description: input.Description,
@@ -46,7 +58,7 @@ func CreateExperience(c *gin.Context) {
 		Location:    input.Location,
 		StartDate:   input.StartDate,
 		EndDate:     input.EndDate,
-		UserID:      input.UserID,
+		UserID:      userIDUint,
 	}
 
 	result := config.DB.Create(&experience)

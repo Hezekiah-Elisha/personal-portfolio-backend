@@ -11,5 +11,6 @@ func SetupUserRoutes(r *gin.Engine) {
 	{
 		userRoute.GET("/", controllers.GetAllUsers)
 		userRoute.POST("/", controllers.Createuser)
+		userRoute.DELETE("/:id", controllers.DeleteUser)
 	}
 }

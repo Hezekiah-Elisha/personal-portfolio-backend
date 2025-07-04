@@ -10,7 +10,7 @@ func SetupAuthRoutes(r *gin.Engine) {
 	authRoute := r.Group("/auth")
 	{
 		authRoute.POST("/register", controllers.Register)
-		// authRoute.POST("/login", Login)
+		authRoute.POST("/login", controllers.Login)
 		// authRoute.GET("/profile", AuthMiddleware(), GetProfile)
 	}
 }

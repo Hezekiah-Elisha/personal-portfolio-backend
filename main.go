@@ -46,6 +46,7 @@ func main() {
 	routes.SetupUserRoutes(r)
 	routes.SetupExperienceRoutes(r)
 	routes.SetupEducationRoutes(r)
+	routes.SetupProjectRoutes(r)
 
 	r.Run(":8081")
 }

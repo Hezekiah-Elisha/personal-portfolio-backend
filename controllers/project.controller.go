@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"personal-portfolio-backend/config"
 	"personal-portfolio-backend/models"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -54,8 +55,8 @@ func CreateProject(c *gin.Context) {
 		Title:       input.Title,
 		Description: input.Description,
 		TechStack:   input.TechStack,
-		Link:        input.Link,
-		SourceCode:  input.SourceCode,
+		Link:        stringPtr(input.Link),
+		SourceCode:  stringPtr(input.SourceCode),
 		Image:       input.Image,
 		UserID:      userIDUint,
 	}
@@ -69,13 +70,24 @@ func CreateProject(c *gin.Context) {
 		Title:       project.Title,
 		Description: project.Description,
 		TechStack:   project.TechStack,
-		Link:        project.Link,
-		SourceCode:  project.SourceCode,
+		Link:        derefString(project.Link),
+		SourceCode:  derefString(project.SourceCode),
 		Image:       project.Image,
 		UserID:      project.UserID,
-		CreatedAt:   project.CreatedAt.String(),
-		UpdatedAt:   project.UpdatedAt.String(),
+		CreatedAt:   project.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   project.UpdatedAt.Format(time.RFC3339),
 	})
+}
+
+func derefString(s *string) string {
+	if s != nil {
+		return *s
+	}
+	return ""
+}
+
+func stringPtr(s string) *string {
+	return &s
 }
 
 func GetAllProjects(c *gin.Context) {
@@ -92,8 +104,8 @@ func GetAllProjects(c *gin.Context) {
 			Title:       project.Title,
 			Description: project.Description,
 			TechStack:   project.TechStack,
-			Link:        project.Link,
-			SourceCode:  project.SourceCode,
+			Link:        derefString(project.Link),
+			SourceCode:  derefString(project.SourceCode),
 			Image:       project.Image,
 			UserID:      project.UserID,
 			CreatedAt:   project.CreatedAt.String(),

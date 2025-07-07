@@ -202,6 +202,7 @@ Modify the CORS configuration in `main.go` to suit your frontend requirements.
 
 - [Bcrypt](https://mojoauth.com/hashing/bcrypt-in-go/) - Password hashing in Go using Bcrypt
 - [jwt-token](https://medium.com/@cheickzida/golang-implementing-jwt-token-authentication-bba9bfd84d60) - JWT token authentication in Go
+- [Image Upload](https://medium.com/@m7adeel/golang-backend-image-upload-api-887e07e5a70b) - Image upload API in Go
 
 ## License
 

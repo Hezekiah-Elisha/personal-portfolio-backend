@@ -14,6 +14,7 @@ type CreateProjectInput struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	TechStack   string `json:"tech_stack" binding:"required"`
+	Type        string `json:"type" binding:"required"`
 	Link        string `json:"link"`
 	SourceCode  string `json:"source_code" binding:"required"`
 	Image       string `json:"image"`
@@ -25,6 +26,7 @@ type ProjectResponse struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	TechStack   string `json:"tech_stack"`
+	Type        string `json:"type"`
 	Link        string `json:"link"`
 	SourceCode  string `json:"source_code"`
 	Image       string `json:"image"`
@@ -56,6 +58,7 @@ func CreateProject(c *gin.Context) {
 		Title:       input.Title,
 		Description: input.Description,
 		TechStack:   input.TechStack,
+		Type:        input.Type,
 		Link:        stringPtr(input.Link),
 		SourceCode:  stringPtr(input.SourceCode),
 		Image:       input.Image,
@@ -71,6 +74,7 @@ func CreateProject(c *gin.Context) {
 		Title:       project.Title,
 		Description: project.Description,
 		TechStack:   project.TechStack,
+		Type:        project.Type,
 		Link:        derefString(project.Link),
 		SourceCode:  derefString(project.SourceCode),
 		Image:       project.Image,
@@ -113,6 +117,7 @@ func GetAllProjects(c *gin.Context) {
 			Title:       project.Title,
 			Description: project.Description,
 			TechStack:   project.TechStack,
+			Type:        project.Type,
 			Link:        derefString(project.Link),
 			SourceCode:  derefString(project.SourceCode),
 			Image:       project.Image,

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"personal-portfolio-backend/config"
 	"personal-portfolio-backend/models"
@@ -15,7 +16,7 @@ type CreateProjectInput struct {
 	TechStack   string `json:"tech_stack" binding:"required"`
 	Link        string `json:"link"`
 	SourceCode  string `json:"source_code" binding:"required"`
-	Image       string `json:"image" binding:"required"`
+	Image       string `json:"image"`
 	UserID      uint   `json:"user_id"`
 }
 
@@ -94,9 +95,17 @@ func GetAllProjects(c *gin.Context) {
 	var projects []models.Project
 	if err := config.DB.Find(&projects).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve projects", "details": err.Error()})
+		log.Printf("Error retrieving projects: %v", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
+	log.Printf("Retrieved %d projects from the database", len(projects))
+
+	if len(projects) == 0 {
+		c.JSON(http.StatusOK, gin.H{"message": "No projects found"})
+		return
+	}
 	var projectResponses []ProjectResponse
 	for _, project := range projects {
 		projectResponses = append(projectResponses, ProjectResponse{

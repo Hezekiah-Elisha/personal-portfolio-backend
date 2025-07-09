@@ -9,6 +9,6 @@ type Project struct {
 	TechStack   string  `json:"tech_stack" gorm:"not null"`
 	Link        *string `json:"link"`
 	SourceCode  *string `json:"source_code"`
-	Image       string  `json:"image" gorm:"not null"`
+	Image       string  `json:"image" gorm:"not null" default:"https://example.com/default-image.png"`
 	UserID      uint    `json:"user_id" gorm:"not null"`
 }

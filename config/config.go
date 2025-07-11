@@ -27,7 +27,7 @@ func ConnectDB() *gorm.DB {
 	dbName := os.Getenv("DB_NAME")
 
 	// Add debug logging to check if env vars are set
-	log.Printf("Connecting to database: %s@%s:%s/%s", dbUser, dbHost, dbPort, dbName)
+	log.Printf("Connecting to database: %s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
 
 	dsn := dbUser + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 

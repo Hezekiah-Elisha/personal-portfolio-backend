@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"personal-portfolio-backend/config"
 	"personal-portfolio-backend/routes"
@@ -23,13 +24,24 @@ func main() {
 	default:
 		gin.SetMode(gin.DebugMode)
 	}
-	config.ConnectDB()
+	// Handle database connection errors
+	db := config.ConnectDB()
+	if db == nil {
+		log.Fatal("Failed to connect to database")
+		return
+	}
 
 	r := gin.Default()
 	r.Use(gin.Logger())
 
+	allowedOrigins := []string{"http://localhost:3000", "http://127.0.0.1:3000"}
+	if ginMode == "release" {
+		// Add your production domain
+		allowedOrigins = append(allowedOrigins, "https://hezekiah.hub.ke", "https://api.hezekiah.hub.ke")
+	}
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:3000"},
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

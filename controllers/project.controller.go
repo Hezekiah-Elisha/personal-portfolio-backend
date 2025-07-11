@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"personal-portfolio-backend/config"
 	"personal-portfolio-backend/models"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,9 +14,10 @@ type CreateProjectInput struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	TechStack   string `json:"tech_stack" binding:"required"`
+	Type        string `json:"type" binding:"required"`
 	Link        string `json:"link"`
 	SourceCode  string `json:"source_code" binding:"required"`
-	Image       string `json:"image" binding:"required"`
+	Image       string `json:"image"`
 	UserID      uint   `json:"user_id"`
 }
 
@@ -23,6 +26,7 @@ type ProjectResponse struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	TechStack   string `json:"tech_stack"`
+	Type        string `json:"type"`
 	Link        string `json:"link"`
 	SourceCode  string `json:"source_code"`
 	Image       string `json:"image"`
@@ -54,8 +58,9 @@ func CreateProject(c *gin.Context) {
 		Title:       input.Title,
 		Description: input.Description,
 		TechStack:   input.TechStack,
-		Link:        input.Link,
-		SourceCode:  input.SourceCode,
+		Type:        input.Type,
+		Link:        stringPtr(input.Link),
+		SourceCode:  stringPtr(input.SourceCode),
 		Image:       input.Image,
 		UserID:      userIDUint,
 	}
@@ -69,22 +74,42 @@ func CreateProject(c *gin.Context) {
 		Title:       project.Title,
 		Description: project.Description,
 		TechStack:   project.TechStack,
-		Link:        project.Link,
-		SourceCode:  project.SourceCode,
+		Type:        project.Type,
+		Link:        derefString(project.Link),
+		SourceCode:  derefString(project.SourceCode),
 		Image:       project.Image,
 		UserID:      project.UserID,
-		CreatedAt:   project.CreatedAt.String(),
-		UpdatedAt:   project.UpdatedAt.String(),
+		CreatedAt:   project.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   project.UpdatedAt.Format(time.RFC3339),
 	})
+}
+
+func derefString(s *string) string {
+	if s != nil {
+		return *s
+	}
+	return ""
+}
+
+func stringPtr(s string) *string {
+	return &s
 }
 
 func GetAllProjects(c *gin.Context) {
 	var projects []models.Project
 	if err := config.DB.Find(&projects).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve projects", "details": err.Error()})
+		log.Printf("Error retrieving projects: %v", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
+	log.Printf("Retrieved %d projects from the database", len(projects))
+
+	if len(projects) == 0 {
+		c.JSON(http.StatusOK, gin.H{"message": "No projects found"})
+		return
+	}
 	var projectResponses []ProjectResponse
 	for _, project := range projects {
 		projectResponses = append(projectResponses, ProjectResponse{
@@ -92,8 +117,9 @@ func GetAllProjects(c *gin.Context) {
 			Title:       project.Title,
 			Description: project.Description,
 			TechStack:   project.TechStack,
-			Link:        project.Link,
-			SourceCode:  project.SourceCode,
+			Type:        project.Type,
+			Link:        derefString(project.Link),
+			SourceCode:  derefString(project.SourceCode),
 			Image:       project.Image,
 			UserID:      project.UserID,
 			CreatedAt:   project.CreatedAt.String(),

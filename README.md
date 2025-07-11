@@ -39,6 +39,8 @@ personal-portfolio-backend/
 │   └── experience.model.go    # Experience data model
 ├── routes/
 │   ├── auth.route.go          # Authentication routes
+|   |-- experience.route.go    # Experience routes
+|   |-- project.route.go       # Projects available routes   
 │   ├── user.route.go          # User routes
 │   └── experience.route.go    # Experience routes
 ├── main.go                    # Application entry point

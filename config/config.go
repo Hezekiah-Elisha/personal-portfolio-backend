@@ -13,10 +13,13 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() *gorm.DB {
-	if os.Getenv("GIN_MODE") == "debug" {
+	ginMode := os.Getenv("GIN_MODE")
+
+	if ginMode != "release" && ginMode != "test" {
+		// Load .env file only in debug mode; in production, environment variables should be set differently
 		if err := godotenv.Load(); err != nil {
 			log.Printf("Warning: Error loading .env file: %v", err)
-			// Don't return here in production, env vars might be set elsewhere
+			// In production, it's expected that environment variables are set by the environment, not .env file
 		}
 	}
 

@@ -12,9 +12,10 @@ import (
 )
 
 func main() {
-	gin.SetMode(gin.DebugMode)
+	// gin.SetMode(gin.DebugMode)
 
 	ginMode := os.Getenv("GIN_MODE")
+	log.Printf("Running in %s mode", ginMode)
 
 	switch ginMode {
 	case "release":

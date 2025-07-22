@@ -19,6 +19,15 @@ type CreateExperienceInput struct {
 	UserID      uint   `json:"user_id"`
 }
 
+type EditExperienceInput struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Company     string `json:"company"`
+	Location    string `json:"location"`
+	StartDate   string `json:"start_date"`
+	EndDate     string `json:"end_date"`
+}
+
 type ExperienceResponse struct {
 	ID          uint   `json:"id"`
 	Title       string `json:"title"`
@@ -87,4 +96,76 @@ func GetAllExperiences(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, experiences)
+}
+
+func GetExperienceByID(c *gin.Context) {
+	id := c.Param("id")
+
+	var experience models.Experience
+
+	if err := config.DB.Where("ID = ?", id).First(&experience).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Experience not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, experience)
+}
+
+func DeleteExperience(c *gin.Context) {
+	id := c.Param("id")
+
+	var experience models.Experience
+
+	if err := config.DB.Where("ID = ?", id).First(&experience).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Experience not found"})
+		return
+	}
+
+	config.DB.Delete(&experience)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Experience deleted successfully"})
+
+}
+
+func UpdateExperience(c *gin.Context) {
+	id := c.Param("id")
+	var input EditExperienceInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input data", "details": err.Error()})
+		return
+	}
+
+	var experience models.Experience
+
+	if err := config.DB.Where("ID = ?", id).First(&experience).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Experience not found"})
+		return
+	}
+
+	if input.Title != "" {
+		experience.Title = input.Title
+	}
+	if input.Description != "" {
+		experience.Description = input.Description
+	}
+	if input.Company != "" {
+		experience.Company = input.Company
+	}
+	if input.Location != "" {
+		experience.Location = input.Location
+	}
+	if input.StartDate != "" {
+		experience.StartDate = input.StartDate
+	}
+	if input.EndDate != "" {
+		experience.EndDate = input.EndDate
+	}
+
+	if err := config.DB.Save(&experience).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update experience"})
+		return
+	}
+
+	c.JSON(http.StatusOK, experience)
 }

@@ -1,0 +1,29 @@
+# Config file for air (https://github.com/cosmtrek/air)
+# You can customize these settings as needed.
+
+[build]
+  # Command to build your app
+  cmd = "go build -o ./tmp/main ."
+  # Binary to run after build
+  bin = "./tmp/main"
+  # Watch these directories for changes
+  include_dirs = ["."]
+  # Exclude these directories/files
+  exclude_dirs = ["tmp", "vendor"]
+  # Watch these file extensions
+  include_exts = ["go", "toml", "yaml", "yml"]
+  # Exclude these file extensions
+  exclude_exts = ["md"]
+  # Delay before restart (ms)
+  delay = 1000
+
+[log]
+  # Show log time
+  time = true
+
+[color]
+  main = "yellow"
+  watcher = "cyan"
+  build = "green"
+  runner = "magenta"
+  error = "red"

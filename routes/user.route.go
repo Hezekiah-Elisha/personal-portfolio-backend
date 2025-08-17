@@ -12,7 +12,7 @@ func SetupUserRoutes(r *gin.Engine) {
 	{
 		userRoute.GET("/", controllers.GetAllUsers)
 		userRoute.POST("/", controllers.Createuser)
-		userRoute.GET("/:email", controllers.FindUserByEmail)
+		userRoute.GET("/:email", middlewares.AuthMiddleware(), controllers.FindUserByEmail)
 		userRoute.DELETE("/:id", middlewares.AuthMiddleware(), controllers.DeleteUser)
 	}
 }
